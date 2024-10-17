@@ -6,9 +6,25 @@
     <title><%= title %></title>
   </head>
   <body>
-    <h1>Welcome to the Profile Page</h1>
+
+    <header>
+      <h1>Welcome to the Profile Page</h1>
+    </header>
+
     <p>
       Here, you will manage your shelters and view your profile information.
     </p>
+
+    <h2>Your Shelters</h2>
+    <ul>
+      <% shelters.forEach(shelter => { %>
+      <li>
+        <%= shelter.name %> - <%= shelter.location %>
+        <a href="/shelters/<%= shelter.id %>">View Details</a>
+      </li>
+      <% }); %>
+    </ul>
+    <a href="/shelters/new">Add a New Shelter</a>
+
   </body>
 </html>

@@ -40,11 +40,12 @@ function authenticateToken(req, res, next) {
 // ------------------- GET ROUTES -------------------
 
 app.get("/", (req, res) => {
-  res.render("index", { title: "ShelterMap" });
+  res.render("index", { title: "ShelterMap", shelters });
 });
 
 app.get("/profile", authenticateToken, (req, res) => {
-  res.render("profile", { title: "Profile - ShelterMap" });
+  const userShelters = shelters.filter(shelter => shelter.user === req.user.email);
+  res.render("profile", { title: "Profile - ShelterMap", shelters: userShelters });
 });
 
 app.get("/register", (req, res) => {
@@ -57,13 +58,26 @@ app.get("/login", (req, res) => {
 
 // ------------------- Shelters GET ROUTES -------------------
 
+// Route to show all shelters
 app.get("/shelters", (req, res) => {
   res.render("shelters", { title: "Shelters - ShelterMap", shelters });
 });
 
 // Route to add a new shelter
-app.get('/shelters/new', authenticateToken, (req, res) => {
-  res.render('new-shelter', { title: 'Add a New Shelter' });
+app.get("/shelters/new", authenticateToken, (req, res) => {
+  res.render("new-shelter", { title: "Add a New Shelter" });
+});
+
+// Route to show shelter details
+app.get("/shelters/:id", (req, res) => {
+  const shelterId = parseInt(req.params.id);
+  const shelter = shelters.find((shelter) => shelter.id === shelterId);
+
+  if (!shelter) {
+    return res.status(404).send("Shelter not found");
+  }
+
+  res.render("shelter-details", { title: `Shelter - ${shelter.name}`, shelter });
 });
 
 // ------------------- POST ROUTES -------------------
@@ -127,7 +141,7 @@ app.post("/login", async (req, res) => {
 let shelters = [];
 
 // Route to add a new shelter
-app.post('/shelters/new', authenticateToken, (req, res) => {
+app.post("/shelters/new", authenticateToken, (req, res) => {
   const { name, location, latitude, longitude } = req.body;
 
   // Criar o novo abrigo
@@ -137,14 +151,13 @@ app.post('/shelters/new', authenticateToken, (req, res) => {
     location,
     latitude: parseFloat(latitude),
     longitude: parseFloat(longitude),
-    user: req.user.email // Relate the shelter to the user who created it
+    user: req.user.email, // Relate the shelter to the user who created it
   };
 
   shelters.push(newShelter); // Add the new shelter to the array
 
-  res.redirect('/shelters'); // Redirect to the shelters page
+  res.redirect("/shelters"); // Redirect to the shelters page
 });
-
 
 // ------------------- START SERVER -------------------
 

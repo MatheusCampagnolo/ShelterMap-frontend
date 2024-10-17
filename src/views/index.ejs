@@ -14,6 +14,16 @@
       <h2>Discover shelters near you and find ways to help.</h2>
     </main>
 
+    <ul>
+      <% shelters.forEach(shelter => { %>
+        <li>
+          <a href="/shelters/<%= shelter.id %>">
+            <%= shelter.name %> - <%= shelter.location %>
+          </a>
+        </li>
+      <% }); %>
+    </ul>
+
     <footer>
       <p>&copy; 2024 ShelterMap. All rights reserved.</p>
     </footer>

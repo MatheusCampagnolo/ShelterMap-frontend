@@ -10,7 +10,7 @@
     <ul>
       <% shelters.forEach(shelter => { %>
       <li>
-        <strong><%= shelter.name %></strong> - <%= shelter.location %> (<%=
+        <a href="/shelters/<%= shelter.id %>"><strong><%= shelter.name %></strong></a>  - <%= shelter.location %> (<%=
         shelter.latitude %>, <%= shelter.longitude %>)
       </li>
       <% }) %>

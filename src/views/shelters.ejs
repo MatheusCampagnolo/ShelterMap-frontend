@@ -6,40 +6,28 @@
     <title><%= title %></title>
   </head>
   <body>
-    
-    <h1>List of Shelters</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Location</th>
-          <th>Latitude</th>
-          <th>Longitude</th>
-          <th>Description</th>
-          <th>Current Needs</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% shelters.forEach(shelter => { %>
-        <tr>
-          <td><%= shelter.name %></td>
-          <td><%= shelter.location %></td>
-          <td><%= shelter.latitude %></td>
-          <td><%= shelter.longitude %></td>
-          <td><%= shelter.description || 'N/A' %></td>
-          <!-- Show description or N/A if not provided -->
-          <td>
-            <%= shelter.needs.length > 0 ? shelter.needs.join(', ') : 'N/A' %>
-          </td>
-          <td>
-            <a href="/shelters/<%= shelter.id %>/edit">Edit</a>
-            <!-- Add any other actions as needed, e.g., delete -->
-          </td>
-        </tr>
-        <% }); %>
-      </tbody>
-    </table>
+    <h1>Available Shelters</h1>
 
+    <ul>
+      <% shelters.forEach(shelter => { %>
+      <li>
+        <strong><%= shelter.name %></strong> - <%= shelter.location %>
+        <br />
+        <strong>Description:</strong>
+        <% if (shelter.description && shelter.description.length > 0) { %> <%=
+        shelter.description.join(', ') %>
+        <!-- Display as tags -->
+        <% } else { %> No description provided. <% } %>
+        <br />
+        <strong>Needs:</strong>
+        <% if (shelter.needs && shelter.needs.length > 0) { %> <%=
+        shelter.needs.join(', ') %>
+        <!-- Display as list of needs -->
+        <% } else { %> No current needs. <% } %>
+        <br />
+        <a href="/shelters/<%= shelter.id %>">View details</a>
+      </li>
+      <% }) %>
+    </ul>
   </body>
 </html>

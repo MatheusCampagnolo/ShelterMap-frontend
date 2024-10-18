@@ -18,11 +18,15 @@
       <li>
         <strong><%= shelter.name %></strong> - <%= shelter.location %>
         <br />
-        <em>Description:</em> <%= shelter.description || 'N/A' %>
+        <strong>Description:</strong>
+        <% if (shelter.description && shelter.description.length > 0) { %> <%=
+        shelter.description.join(', ') %> <% } else { %> No description
+        provided. <% } %>
         <br />
-        <em>Current Needs:</em> <%= shelter.needs.length > 0 ?
-        shelter.needs.join(', ') : 'N/A' %>
-
+        <strong>Needs:</strong>
+        <% if (shelter.needs && shelter.needs.length > 0) { %> <%=
+        shelter.needs.join(', ') %> <% } else { %> No current needs. <% } %>
+        <br />
         <a href="/shelters/<%= shelter.id %>/edit">Edit</a>
 
         <form
@@ -32,7 +36,6 @@
         >
           <button type="submit">Delete</button>
         </form>
-        
       </li>
       <% }) %> <% } %>
     </ul>

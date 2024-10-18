@@ -1,29 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
-</head>
-<body>
-
+  </head>
+  <body>
     <header>
-        <h1><%= shelter.name %></h1>
+      <h1>Shelter Details</h1>
     </header>
 
-    <main>
-        <h2>Location: <%= shelter.location %></h2>
-        <p>Latitude: <%= shelter.latitude %></p>
-        <p>Longitude: <%= shelter.longitude %></p>
+    <h2><%= shelter.name %></h2>
 
-        <p>Created by: <%= shelter.user %></p>
+    <main>
+      <h2>Location: <%= shelter.location %></h2>
+      <p>Latitude: <%= shelter.latitude %></p>
+      <p>Longitude: <%= shelter.longitude %></p>
+
+      <p>Description: <%= shelter.description || 'N/A' %></p>
+      <p>
+        Current Needs: <%= shelter.needs.length > 0 ? shelter.needs.join(', ') :
+        'N/A' %>
+      </p>
+
+      <p>Created by: <%= shelter.user %></p>
     </main>
 
     <a href="/shelters">Back to shelters list</a>
 
     <footer>
-        <p>&copy; 2024 ShelterMap. All rights reserved.</p>
+      <p>&copy; 2024 ShelterMap. All rights reserved.</p>
     </footer>
-    
-</body>
+  </body>
 </html>

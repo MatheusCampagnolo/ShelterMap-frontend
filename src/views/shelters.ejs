@@ -6,14 +6,40 @@
     <title><%= title %></title>
   </head>
   <body>
-    <h1>Shelters</h1>
-    <ul>
-      <% shelters.forEach(shelter => { %>
-      <li>
-        <a href="/shelters/<%= shelter.id %>"><strong><%= shelter.name %></strong></a>  - <%= shelter.location %> (<%=
-        shelter.latitude %>, <%= shelter.longitude %>)
-      </li>
-      <% }) %>
-    </ul>
+    
+    <h1>List of Shelters</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Location</th>
+          <th>Latitude</th>
+          <th>Longitude</th>
+          <th>Description</th>
+          <th>Current Needs</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% shelters.forEach(shelter => { %>
+        <tr>
+          <td><%= shelter.name %></td>
+          <td><%= shelter.location %></td>
+          <td><%= shelter.latitude %></td>
+          <td><%= shelter.longitude %></td>
+          <td><%= shelter.description || 'N/A' %></td>
+          <!-- Show description or N/A if not provided -->
+          <td>
+            <%= shelter.needs.length > 0 ? shelter.needs.join(', ') : 'N/A' %>
+          </td>
+          <td>
+            <a href="/shelters/<%= shelter.id %>/edit">Edit</a>
+            <!-- Add any other actions as needed, e.g., delete -->
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
   </body>
 </html>

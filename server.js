@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
+const methodOverride = require("method-override");
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -18,6 +19,7 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // Use cookie parser middleware
+app.use(methodOverride("_method"));
 
 // ------------------- DATA -------------------
 
@@ -43,10 +45,32 @@ app.get("/", (req, res) => {
   res.render("index", { title: "ShelterMap", shelters });
 });
 
+// ------------------- PROFILE GET ROUTES -------------------
+
 app.get("/profile", authenticateToken, (req, res) => {
-  const userShelters = shelters.filter(shelter => shelter.user === req.user.email);
-  res.render("profile", { title: "Profile - ShelterMap", shelters: userShelters });
+  const userShelters = shelters.filter(
+    (shelter) => shelter.user === req.user.email
+  );
+  res.render("profile", {
+    title: "Profile - ShelterMap",
+    shelters: userShelters,
+  });
 });
+
+// Route to show all shelters created by the user
+app.get("/profile/shelters", authenticateToken, (req, res) => {
+  // Filter shelters created by the user
+  const userShelters = shelters.filter(
+    (shelter) => shelter.user === req.user.email
+  );
+
+  res.render("manage-shelters", {
+    title: "Manage Your Shelters",
+    shelters: userShelters,
+  });
+});
+
+// ------------------- AUTH GET ROUTES -------------------
 
 app.get("/register", (req, res) => {
   res.render("register", { title: "Register - ShelterMap" });
@@ -77,7 +101,21 @@ app.get("/shelters/:id", (req, res) => {
     return res.status(404).send("Shelter not found");
   }
 
-  res.render("shelter-details", { title: `Shelter - ${shelter.name}`, shelter });
+  res.render("shelter-details", {
+    title: `Shelter - ${shelter.name}`,
+    shelter,
+  });
+});
+
+// Route to show shelter edit form
+app.get("/shelters/:id/edit", authenticateToken, (req, res) => {
+  const shelter = shelters.find(
+    (s) => s.id === parseInt(req.params.id) && s.user === req.user.email
+  );
+
+  if (!shelter) return res.status(404).send("Shelter not found");
+
+  res.render("edit-shelter", { title: "Edit Shelter", shelter });
 });
 
 // ------------------- POST ROUTES -------------------
@@ -151,12 +189,55 @@ app.post("/shelters/new", authenticateToken, (req, res) => {
     location,
     latitude: parseFloat(latitude),
     longitude: parseFloat(longitude),
+    description: [],
+    needs: [],
     user: req.user.email, // Relate the shelter to the user who created it
   };
 
   shelters.push(newShelter); // Add the new shelter to the array
 
   res.redirect("/shelters"); // Redirect to the shelters page
+});
+
+// Route to handle shelter updates
+app.post("/shelters/:id/edit", authenticateToken, (req, res) => {
+  const shelterIndex = shelters.findIndex(
+    (shelter) =>
+      shelter.id === parseInt(req.params.id) && shelter.user === req.user.email
+  );
+
+  if (shelterIndex === -1) {
+    return res.status(404).send("Shelter not found");
+  }
+
+  const { name, location, description, needs } = req.body;
+
+  // Update shelter
+  shelters[shelterIndex].name = name;
+  shelters[shelterIndex].location = location;
+  shelters[shelterIndex].description = Array.isArray(description)
+    ? description
+    : [description];
+  shelters[shelterIndex].needs = Array.isArray(needs) ? needs : [needs];
+
+  res.redirect("/profile/shelters");
+});
+
+// ------------------- DELETE ROUTES -------------------
+
+// Route to delete a shelter
+app.delete("/shelters/:id", authenticateToken, (req, res) => {
+  const shelterIndex = shelters.findIndex(
+    (shelter) =>
+      shelter.id === parseInt(req.params.id) && shelter.user === req.user.email
+  );
+
+  if (shelterIndex === -1) {
+    return res.status(404).send("Shelter not found");
+  }
+
+  shelters.splice(shelterIndex, 1); // Remove shelter from the array
+  res.redirect("/profile/shelters");
 });
 
 // ------------------- START SERVER -------------------

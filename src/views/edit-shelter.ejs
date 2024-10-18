@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  </head>
+  <body>
+    <h1>Edit Shelter</h1>
+
+    <form action="/shelters/<%= shelter.id %>/edit" method="POST">
+      <label for="name">Shelter Name:</label>
+      <input type="text" name="name" id="name" value="<%= shelter.name %>" required>
+
+      <br>
+    
+      <!-- Shelter Location -->
+      <label for="location">Location:</label>
+      <input type="text" name="location" id="location" value="<%= shelter.location %>" required>
+
+      <br>
+
+      <!-- Shelter Latitude -->
+      <label for="latitude">Latitude:</label>
+      <input type="text" id="latitude" name="latitude" value="<%= shelter.latitude %>" required>
+            
+      <br>
+      
+      <!-- Shelter Longitude -->
+      <label for="longitude">Longitude:</label>
+      <input type="text" id="longitude" name="longitude" value="<%= shelter.longitude %>" required>
+            
+      <br>
+
+      <!-- Shelter Description -->
+      <label for="description">Shelter Tags (e.g. animal shelter, pet friendly, etc.):</label>
+      <select id="description" name="description[]" multiple="multiple" class="js-example-tags" required>
+        <% const allTags = ["animal shelter", "pet friendly", "Brazil", "temporary", "long-term"]; %>
+        <% allTags.forEach(tag => { %>
+          <option value="<%= tag %>" <%= shelter.description.includes(tag) ? 'selected' : '' %>><%= tag %></option>
+        <% }) %>
+      </select>
+
+      <br>
+
+      <!-- Shelter Needs -->
+      <label for="needs">Current Needs:</label>
+      <select id="needs" name="needs[]" multiple="multiple" class="js-example-needs">
+        <% const allNeeds = ["hygiene products", "medicine", "food", "clothing"]; %>
+        <% allNeeds.forEach(need => { %>
+          <option value="<%= need %>" <%= shelter.needs.includes(need) ? 'selected' : '' %>><%= need %></option>
+        <% }) %>
+      </select>
+    
+      <button type="submit">Save Shelter</button>
+    </form>    
+
+    <a href="/profile/shelters">Back to Shelter List</a>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+      $(document).ready(function() {
+        $('.js-example-tags').select2({
+          tags: true,
+          placeholder: "Select or add tags"
+        });
+        $('.js-example-needs').select2({
+          placeholder: "Select current needs"
+        });
+      });
+    </script>
+  </body>
+</html>

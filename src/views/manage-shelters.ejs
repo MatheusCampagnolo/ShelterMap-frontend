@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+  </head>
+  <body>
+    <h1>Manage Your Shelters</h1>
+
+    <ul>
+      <% if (shelters.length === 0) { %>
+      <p>
+        No shelters registered yet.
+        <a href="/shelters/new">Add a new shelter</a>
+      </p>
+      <% } else { %> <% shelters.forEach(shelter => { %>
+      <li>
+        <strong><%= shelter.name %></strong> - <%= shelter.location %>
+        <br />
+        <em>Description:</em> <%= shelter.description || 'N/A' %>
+        <br />
+        <em>Current Needs:</em> <%= shelter.needs.length > 0 ?
+        shelter.needs.join(', ') : 'N/A' %>
+
+        <a href="/shelters/<%= shelter.id %>/edit">Edit</a>
+
+        <form
+          action="/shelters/<%= shelter.id %>?_method=DELETE"
+          method="POST"
+          style="display: inline"
+        >
+          <button type="submit">Delete</button>
+        </form>
+        
+      </li>
+      <% }) %> <% } %>
+    </ul>
+  </body>
+</html>

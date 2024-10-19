@@ -6,59 +6,97 @@
     <title><%= title %></title>
 
     <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <h1>Edit Shelter</h1>
 
-    <form action="/shelters/<%= shelter.id %>/edit" method="POST">
+    <form
+      id="edit-shelter-form"
+      action="/shelters/<%= shelter.id %>/edit"
+      method="POST"
+    >
       <label for="name">Shelter Name:</label>
-      <input type="text" name="name" id="name" value="<%= shelter.name %>" required>
+      <input
+        type="text"
+        name="name"
+        id="name"
+        value="<%= shelter.name %>"
+        required
+      />
 
-      <br>
-    
+      <br />
+
       <!-- Shelter Location -->
       <label for="location">Location:</label>
-      <input type="text" name="location" id="location" value="<%= shelter.location %>" required>
+      <input
+        type="text"
+        name="location"
+        id="location"
+        value="<%= shelter.location %>"
+        required
+      />
 
-      <br>
+      <br />
 
       <!-- Shelter Latitude -->
       <label for="latitude">Latitude:</label>
-      <input type="text" id="latitude" name="latitude" value="<%= shelter.latitude %>" required>
-            
-      <br>
-      
+      <input
+        type="text"
+        id="latitude"
+        name="latitude"
+        value="<%= shelter.latitude %>"
+        required
+      />
+
+      <br />
+
       <!-- Shelter Longitude -->
       <label for="longitude">Longitude:</label>
-      <input type="text" id="longitude" name="longitude" value="<%= shelter.longitude %>" required>
-            
-      <br>
+      <input
+        type="text"
+        id="longitude"
+        name="longitude"
+        value="<%= shelter.longitude %>"
+        required
+      />
 
-      <!-- Shelter Description -->
-      <label for="description">Shelter Tags (e.g. animal shelter, pet friendly, etc.):</label>
-      <select id="description" name="description[]" multiple="multiple" class="js-example-tags" required>
-        <% const allTags = ["animal shelter", "pet friendly", "Brazil", "temporary", "long-term"]; %>
-        <% allTags.forEach(tag => { %>
-          <option value="<%= tag %>" <%= shelter.description.includes(tag) ? 'selected' : '' %>><%= tag %></option>
-        <% }) %>
-      </select>
+      <br />
 
-      <br>
+      <!-- Shelter Description (Tags) -->
+      <label for="description"
+        >Shelter Tags (e.g. animal shelter, pet friendly, etc.):</label
+      >
+      <select
+        id="description"
+        name="description[]"
+        multiple="multiple"
+        class="js-example-tags"
+        required
+      ></select>
+      <br />
 
       <!-- Shelter Needs -->
       <label for="needs">Current Needs:</label>
-      <select id="needs" name="needs[]" multiple="multiple" class="js-example-needs">
-        <% const allNeeds = ["hygiene products", "medicine", "food", "clothing"]; %>
-        <% allNeeds.forEach(need => { %>
-          <option value="<%= need %>" <%= shelter.needs.includes(need) ? 'selected' : '' %>><%= need %></option>
-        <% }) %>
-      </select>
-    
+      <select
+        id="needs"
+        name="needs[]"
+        multiple="multiple"
+        class="js-example-needs"
+      ></select>
+      <br />
+
       <button type="submit">Save Shelter</button>
-    </form>    
+    </form>
 
     <a href="/profile/shelters">Back to Shelter List</a>
+
+    <p id="feedback-message" style="color: green; display: none">
+      Shelter updated successfully!
+    </p>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -68,12 +106,62 @@
 
     <script>
       $(document).ready(function() {
-        $('.js-example-tags').select2({
-          tags: true,
-          placeholder: "Select or add tags"
-        });
-        $('.js-example-needs').select2({
-          placeholder: "Select current needs"
+        fetch('/shelters/options')
+          .then(response => response.json())
+          .then(data => {
+            const tagsSelect = $('.js-example-tags');
+            data.tags.forEach(tag => {
+              const isSelected = <%= JSON.stringify(shelter.description) %>.includes(tag);
+              const option = new Option(tag, tag, false, isSelected);
+              tagsSelect.append(option);
+            });
+            tagsSelect.select2({
+              tags: true,
+              placeholder: "Select or add tags"
+            });
+
+            const needsSelect = $('.js-example-needs');
+            data.needs.forEach(need => {
+              const isSelected = <%= JSON.stringify(shelter.needs) %>.includes(need);
+              const option = new Option(need, need, false, isSelected);
+              needsSelect.append(option);
+            });
+            needsSelect.select2({
+              placeholder: "Select current needs"
+            });
+          });
+
+        document.getElementById("edit-shelter-form").addEventListener("submit", function(event) {
+          event.preventDefault();
+
+          const name = document.getElementById("name").value;
+          const location = document.getElementById("location").value;
+
+          if (!name || !location) {
+            alert("Name and location are required!");
+            return;
+          }
+
+          const formData = new FormData(this);
+          const shelterId = "<%= shelter.id %>";
+
+          fetch(`/shelters/${shelterId}/edit`, {
+            method: "POST",
+            body: new URLSearchParams(formData),
+          })
+          .then(response => {
+            if (response.ok) {
+              document.getElementById("feedback-message").style.display = "block";
+              setTimeout(() => {
+                document.getElementById("feedback-message").style.display = "none";
+              }, 3000); 
+            } else {
+              alert("Error saving shelter.");
+            }
+          })
+          .catch(error => {
+            console.error("Error:", error);
+          });
         });
       });
     </script>

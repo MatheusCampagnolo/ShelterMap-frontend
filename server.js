@@ -42,22 +42,10 @@ function authenticateToken(req, res, next) {
 // ------------------- GET ROUTES -------------------
 
 app.get("/", (req, res) => {
-  // Get all available tags and needs
-  const availableTags =
-    shelters.length > 0
-      ? Array.from(new Set(shelters.flatMap((shelter) => shelter.description)))
-      : [];
-
-  const availableNeeds =
-    shelters.length > 0
-      ? Array.from(new Set(shelters.flatMap((shelter) => shelter.needs)))
-      : [];
 
   res.render("index", {
     title: "ShelterMap - Home",
-    availableTags,
-    availableNeeds,
-    filteredShelters: shelters, // Pass all shelters to the view
+    filteredShelters: shelters
   });
 });
 
@@ -67,6 +55,7 @@ app.get("/profile", authenticateToken, (req, res) => {
   const userShelters = shelters.filter(
     (shelter) => shelter.user === req.user.email
   );
+
   res.render("profile", {
     title: "Profile - ShelterMap",
     shelters: userShelters,
@@ -141,6 +130,18 @@ app.get("/shelters", (req, res) => {
     filteredShelters,
     availableTags,
     availableNeeds,
+  });
+});
+
+// Simulação dos dados de tags e needs (para posteriormente puxar da API)
+const allTags = ["animal shelter", "pet friendly", "Brazil", "temporary", "long-term"];
+const allNeeds = ["hygiene products", "medicine", "food", "clothing"];
+
+// Rota para fornecer as tags e needs ao frontend
+app.get('/shelters/options', (req, res) => {
+  res.json({
+    tags: allTags,
+    needs: allNeeds
   });
 });
 

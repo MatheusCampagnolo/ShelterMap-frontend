@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <header>
@@ -14,18 +19,78 @@
       <h2>Discover shelters near you and find ways to help.</h2>
     </main>
 
+    <h1>Shelters</h1>
+
+    <form action="/" method="GET">
+      <!-- Select for Tags -->
+      <label for="description">Description (Tags):</label>
+      <select id="description" name="description[]" multiple class="select2">
+        <% if (availableTags && availableTags.length > 0) { %> <%
+        availableTags.forEach(tag => { %>
+        <option value="<%= tag %>"><%= tag %></option>
+        <% }) %> <% } else { %>
+        <option disabled>No tags available</option>
+        <% } %>
+      </select>
+
+      <!-- Select for Needs -->
+      <label for="needs">Needs:</label>
+      <select id="needs" name="needs[]" multiple class="select2">
+        <% if (availableNeeds && availableNeeds.length > 0) { %> <%
+        availableNeeds.forEach(need => { %>
+        <option value="<%= need %>"><%= need %></option>
+        <% }) %> <% } else { %>
+        <option disabled>No needs available</option>
+        <% } %>
+      </select>
+
+    <!-- Display Shelters -->
     <ul>
-      <% shelters.forEach(shelter => { %>
-        <li>
-          <a href="/shelters/<%= shelter.id %>">
-            <%= shelter.name %> - <%= shelter.location %>
-          </a>
-        </li>
-      <% }); %>
+      <% filteredShelters.forEach(shelter => { %>
+      <li><%= shelter.name %> - <%= shelter.location %></li>
+
+      <p>Tags: <%= shelter.description.join(", ") %></p>
+      <p>Needs: <%= shelter.needs.join(", ") %></p>
+      
+      <button onclick="handleUpvote(<%= shelter.id %>, this)">Upvote</button>
+      <span id="upvote-count-<%= shelter.id %>"><%= shelter.upvotes %></span>
+      
+
+      <a href="/shelters/<%= shelter.id %>">View Details</a>
+      <% }) %>
     </ul>
 
     <footer>
       <p>&copy; 2024 ShelterMap. All rights reserved.</p>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $(".select2").select2();
+      });
+
+      function handleUpvote(shelterId, upvoteButton) {
+        fetch(`/shelters/${shelterId}/upvote`, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token'), 
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message === 'Upvote successful') {
+          upvoteButton.classList.add('upvoted');
+        } else if (data.message === 'Upvote removed') {
+          upvoteButton.classList.remove('upvoted');
+        }
+        document.getElementById(`upvote-count-${shelterId}`).textContent = data.upvotes;
+      })
+      .catch(error => console.error('Error:', error));
+  }
+    </script>
+
   </body>
 </html>

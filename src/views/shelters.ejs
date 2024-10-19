@@ -4,30 +4,91 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <h1>Available Shelters</h1>
 
+    <form action="/shelters" method="GET">
+      <h2>Filter Shelters</h2>
+
+      <!-- Select for Tags -->
+      <label for="description">Description (Tags):</label>
+      <select id="description" name="description[]" multiple class="select2">
+        <% availableTags.forEach(tag => { %>
+        <option value="<%= tag %>"><%= tag %></option>
+        <% }) %>
+      </select>
+
+      <!-- Select for Needs -->
+      <label for="needs">Needs:</label>
+      <select id="needs" name="needs[]" multiple class="select2">
+        <% availableNeeds.forEach(need => { %>
+        <option value="<%= need %>"><%= need %></option>
+        <% }) %>
+      </select>
+
+      <!-- Select for Upvotes -->
+      <label for="upvotes">Sort by Upvotes:</label>
+      <select name="upvotes" id="upvotes" class="select2">
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
+      </select>
+
+      <button type="submit">Apply Filters</button>
+    </form>
+
+    <!-- Display Shelters -->
     <ul>
-      <% shelters.forEach(shelter => { %>
+      <% filteredShelters.forEach(shelter => { %>
       <li>
         <strong><%= shelter.name %></strong> - <%= shelter.location %>
-        <br />
-        <strong>Description:</strong>
-        <% if (shelter.description && shelter.description.length > 0) { %> <%=
-        shelter.description.join(', ') %>
-        <!-- Display as tags -->
-        <% } else { %> No description provided. <% } %>
-        <br />
-        <strong>Needs:</strong>
-        <% if (shelter.needs && shelter.needs.length > 0) { %> <%=
-        shelter.needs.join(', ') %>
-        <!-- Display as list of needs -->
-        <% } else { %> No current needs. <% } %>
-        <br />
-        <a href="/shelters/<%= shelter.id %>">View details</a>
+        <p>Tags: <%= shelter.description.join(", ") %></p>
+        <p>Needs: <%= shelter.needs.join(", ") %></p>
+
+        <button onclick="handleUpvote(<%= shelter.id %>, this)">Upvote</button>
+        <span id="upvote-count-<%= shelter.id %>"><%= shelter.upvotes %></span>
+
+        <a href="/shelters/<%= shelter.id %>">View Details</a>
       </li>
       <% }) %>
     </ul>
+
+    <footer>
+      <p>&copy; 2024 ShelterMap. All rights reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $(".select2").select2();
+      });
+
+      function handleUpvote(shelterId, upvoteButton) {
+        fetch(`/shelters/${shelterId}/upvote`, {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.message === "Upvote successful") {
+              upvoteButton.classList.add("upvoted");
+            } else if (data.message === "Upvote removed") {
+              upvoteButton.classList.remove("upvoted");
+            }
+            document.getElementById(`upvote-count-${shelterId}`).textContent =
+              data.upvotes;
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+    </script>
   </body>
 </html>

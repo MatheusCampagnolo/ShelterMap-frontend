@@ -42,7 +42,23 @@ function authenticateToken(req, res, next) {
 // ------------------- GET ROUTES -------------------
 
 app.get("/", (req, res) => {
-  res.render("index", { title: "ShelterMap", shelters });
+  // Get all available tags and needs
+  const availableTags =
+    shelters.length > 0
+      ? Array.from(new Set(shelters.flatMap((shelter) => shelter.description)))
+      : [];
+
+  const availableNeeds =
+    shelters.length > 0
+      ? Array.from(new Set(shelters.flatMap((shelter) => shelter.needs)))
+      : [];
+
+  res.render("index", {
+    title: "ShelterMap - Home",
+    availableTags,
+    availableNeeds,
+    filteredShelters: shelters, // Pass all shelters to the view
+  });
 });
 
 // ------------------- PROFILE GET ROUTES -------------------
@@ -84,7 +100,48 @@ app.get("/login", (req, res) => {
 
 // Route to show all shelters
 app.get("/shelters", (req, res) => {
-  res.render("shelters", { title: "Shelters - ShelterMap", shelters });
+  const { description, needs, upvotes } = req.query;
+
+  let filteredShelters = shelters;
+
+  // Get all tags from shelters
+  if (description && description.length > 0) {
+    filteredShelters = filteredShelters.filter((shelter) =>
+      description.every((tag) => shelter.description.includes(tag))
+    );
+  }
+
+  // Get all needs from shelters
+  if (needs && needs.length > 0) {
+    filteredShelters = filteredShelters.filter((shelter) =>
+      needs.every((need) => shelter.needs.includes(need))
+    );
+  }
+
+  // Sort shelters by upvotes
+  if (upvotes) {
+    filteredShelters = filteredShelters.sort((a, b) => {
+      return upvotes === "asc" ? a.upvotes - b.upvotes : b.upvotes - a.upvotes;
+    });
+  }
+
+  // Get all available tags and needs
+  const availableTags =
+    shelters.length > 0
+      ? Array.from(new Set(shelters.flatMap((shelter) => shelter.description)))
+      : [];
+
+  const availableNeeds =
+    shelters.length > 0
+      ? Array.from(new Set(shelters.flatMap((shelter) => shelter.needs)))
+      : [];
+
+  res.render("shelters", {
+    title: "All Shelters",
+    filteredShelters,
+    availableTags,
+    availableNeeds,
+  });
 });
 
 // Route to add a new shelter
@@ -221,6 +278,47 @@ app.post("/shelters/:id/edit", authenticateToken, (req, res) => {
   shelters[shelterIndex].needs = Array.isArray(needs) ? needs : [needs];
 
   res.redirect("/profile/shelters");
+});
+
+// Route to handle shelter upvotes
+app.post("/shelters/:id/upvote", authenticateToken, (req, res) => {
+  const shelterId = parseInt(req.params.id);
+
+  // Find shelter by ID
+  const shelter = shelters.find((shelter) => shelter.id === shelterId);
+  if (!shelter) {
+    return res.status(404).send("Shelter not found");
+  }
+
+  // Ensure that upvotes is initialized
+  if (typeof shelter.upvotes !== "number") {
+    shelter.upvotes = 0; // Initialize as 0 if not defined
+  }
+
+  // Ensure that upvotesUsers is initialized
+  if (!Array.isArray(shelter.upvotesUsers)) {
+    shelter.upvotesUsers = []; // Initialize as an empty array if not defined
+  }
+
+  // Check if user has already voted
+  const userId = req.user.id; // Get user ID from JWT token
+  const userHasVoted = shelter.upvotesUsers.includes(userId);
+
+  if (userHasVoted) {
+    // Remove upvote
+    shelter.upvotes -= 1;
+    shelter.upvotesUsers = shelter.upvotesUsers.filter((id) => id !== userId);
+    return res
+      .status(200)
+      .send({ message: "Upvote removed", upvotes: shelter.upvotes });
+  } else {
+    // Add upvote
+    shelter.upvotes += 1;
+    shelter.upvotesUsers.push(userId);
+    return res
+      .status(200)
+      .send({ message: "Upvote successful", upvotes: shelter.upvotes });
+  }
 });
 
 // ------------------- DELETE ROUTES -------------------

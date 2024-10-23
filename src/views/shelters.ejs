@@ -44,14 +44,16 @@
 
     <!-- Display Shelters -->
     <ul>
-      <% filteredShelters.forEach(shelter => { %>
+      <% shelters.forEach(shelter => { %>
       <li>
         <strong><%= shelter.name %></strong> - <%= shelter.location %>
         <p>Tags: <%= shelter.description.join(", ") %></p>
         <p>Needs: <%= shelter.needs.join(", ") %></p>
 
         <button onclick="handleUpvote(<%= shelter.id %>, this)">Upvote</button>
-        <span id="upvote-count-<%= shelter.id %>"><%= shelter.upvotes %></span>
+        <span id="upvote-count-<%= shelter.id %>">
+          <%= shelter.upvotes %>
+        </span>
 
         <a href="/shelters/<%= shelter.id %>">View Details</a>
       </li>
@@ -69,26 +71,17 @@
         $(".select2").select2();
       });
 
-      function handleUpvote(shelterId, upvoteButton) {
-        fetch(`/shelters/${shelterId}/upvote`, {
+      function handleUpvote(shelterId, button) {
+        $.ajax({
+          url: `/shelters/${shelterId}/upvote`,
           method: "POST",
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-            "Content-Type": "application/json",
+          success: function (data) {
+            $(button).prop("disabled", true);
+            $(`#upvote-count-${shelterId}`).text(data.upvotes);
           },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.message === "Upvote successful") {
-              upvoteButton.classList.add("upvoted");
-            } else if (data.message === "Upvote removed") {
-              upvoteButton.classList.remove("upvoted");
-            }
-            document.getElementById(`upvote-count-${shelterId}`).textContent =
-              data.upvotes;
-          })
-          .catch((error) => console.error("Error:", error));
+        });
       }
+
     </script>
   </body>
 </html>

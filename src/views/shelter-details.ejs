@@ -16,8 +16,8 @@
       <p><strong>Location:</strong> <%= shelter.location %></p>
 
       <p>
-        <strong>Coordinates:</strong> <%= shelter.latitude %>, <%=
-        shelter.longitude %>
+        <strong>Coordinates:</strong> 
+        <%= shelter.latitude %>, <%=shelter.longitude %>
       </p>
 
       <p>
@@ -36,9 +36,9 @@
       </p>
 
       <p>
-        <strong>Upvotes:</strong> <span id="upvote-count-<%= shelter.id %>"><%= shelter.upvotes %></span>
+        <strong>Upvotes:</strong>
+        <span><%= shelter.upvotes %></span>
       </p>
-
     </main>
 
     <a href="/shelters">Back to shelters list</a>
@@ -46,9 +46,5 @@
     <footer>
       <p>&copy; 2024 ShelterMap. All rights reserved.</p>
     </footer>
-
-    <script>
-      document.getElementById(`upvote-count-${shelterId}`).textContent = data.upvotes;
-    </script>
   </body>
 </html>

@@ -6,7 +6,6 @@
     <title><%= title %></title>
   </head>
   <body>
-
     <header>
       <h1>Welcome to the Profile Page</h1>
     </header>
@@ -16,15 +15,35 @@
     </p>
 
     <h2>Your Shelters</h2>
+    <% if (shelters.length === 0) { %>
+    <p>No shelters registered yet.</p>
+    <% } else { %>
     <ul>
       <% shelters.forEach(shelter => { %>
       <li>
-        <%= shelter.name %> - <%= shelter.location %>
-        <a href="/shelters/<%= shelter.id %>">View Details</a>
+        <strong><%= shelter.name %></strong> - <%= shelter.location %>
+        <br />
+        <strong>Description:</strong>
+        <% if (shelter.description && shelter.description.length > 0) { %> <%=
+        shelter.description.join(', ') %> <% } else { %> No current description. <% } %>
+        <br />
+        <strong>Needs:</strong>
+        <% if (shelter.needs && shelter.needs.length > 0) { %> <%=
+        shelter.needs.join(', ') %> <% } else { %> No current needs. <% } %>
+        <br />
+        <a href="/shelters/<%= shelter.id %>/edit">Edit</a>
+        <form
+          action="/shelters/<%= shelter.id %>?_method=DELETE"
+          method="POST"
+          style="display: inline"
+        >
+          <button type="submit">Delete</button>
+        </form>
       </li>
-      <% }); %>
+      <% }) %>
     </ul>
-    <a href="/shelters/new">Add a New Shelter</a>
+    <% } %>
 
+    <a href="/shelters/new">Add a New Shelter</a>
   </body>
 </html>

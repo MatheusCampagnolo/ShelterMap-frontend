@@ -5,69 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
-      rel="stylesheet"
-    />
+    <link rel="stylesheet" href="/css/styles.css">
   </head>
   <body>
-    <header>
-      <h1>Welcome to ShelterMap</h1>
-    </header>
+    <%- include('partials/header') %>
+
+    <h1>Welcome to ShelterMap</h1>
 
     <main>
       <h2>Discover shelters near you and find ways to help.</h2>
     </main>
 
-    <h1>Shelters</h1>
+    <!-- You can see the shelters list clicking on -->
+    <!-- the "Available Shelters" link below. -->
+    <a href="/shelters">Shelters List</a>
 
-    <!-- Display Shelters -->
-    <ul>
-      <% filteredShelters.forEach(shelter => { %>
-      <li><%= shelter.name %> - <%= shelter.location %></li>
-
-      <p>Tags: <%= shelter.description.join(", ") %></p>
-      <p>Needs: <%= shelter.needs.join(", ") %></p>
-      
-      <button onclick="handleUpvote(<%= shelter.id %>, this)">Upvote</button>
-      <span id="upvote-count-<%= shelter.id %>"><%= shelter.upvotes %></span>
-      
-
-      <a href="/shelters/<%= shelter.id %>">View Details</a>
-      <% }) %>
-    </ul>
-
-    <footer>
-      <p>&copy; 2024 ShelterMap. All rights reserved.</p>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script>
-      $(document).ready(function () {
-        $(".select2").select2();
-      });
-
-      function handleUpvote(shelterId, upvoteButton) {
-        fetch(`/shelters/${shelterId}/upvote`, {
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'), 
-            'Content-Type': 'application/json'
-        }
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.message === 'Upvote successful') {
-            upvoteButton.classList.add('upvoted');
-          } else if (data.message === 'Upvote removed') {
-            upvoteButton.classList.remove('upvoted');
-          }
-          document.getElementById(`upvote-count-${shelterId}`).textContent = data.upvotes;
-        })
-        .catch(error => console.error('Error:', error));
-      }
-    </script>
-
+    <%- include('partials/footer') %>
   </body>
 </html>

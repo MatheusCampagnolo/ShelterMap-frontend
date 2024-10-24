@@ -9,58 +9,107 @@
       href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/select.css" />
   </head>
-  <body>
-    <h1>Available Shelters</h1>
+  <body class="bg-gray-900 text-white flex flex-col min-h-screen">
+    <!-- Header -->
+    <%- include('partials/header') %>
 
-    <form action="/shelters" method="GET">
-      <h2>Filter Shelters</h2>
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <h1 class="text-4xl font-bold mb-8 text-center">Available Shelters</h1>
 
-      <!-- Select for Tags -->
-      <label for="description">Description (Tags):</label>
-      <select id="description" name="description[]" multiple class="select2">
-        <% availableTags.forEach(tag => { %>
-        <option value="<%= tag %>"><%= tag %></option>
+      <form action="/shelters" method="GET" class="mb-8 space-y-4">
+        <h2 class="text-2xl font-semibold mb-4">Filter Shelters</h2>
+
+        <div class="space-y-2">
+          <!-- Select for Tags -->
+          <label for="description" class="block text-lg"
+            >Description (Tags):</label
+          >
+          <select
+            id="description"
+            name="description[]"
+            multiple
+            class="select2 w-full p-2 rounded bg-gray-800"
+          >
+            <% availableTags.forEach(tag => { %>
+            <option value="<%= tag %>"><%= tag %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="space-y-2">
+          <!-- Select for Needs -->
+          <label for="needs" class="block text-lg">Needs:</label>
+          <select
+            id="needs"
+            name="needs[]"
+            multiple
+            class="select2 w-full p-2 rounded bg-gray-800"
+          >
+            <% availableNeeds.forEach(need => { %>
+            <option value="<%= need %>"><%= need %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="space-y-2">
+          <!-- Select for Upvotes -->
+          <label for="upvotes" class="block text-lg">Sort by Upvotes:</label>
+          <select
+            id="upvotes"
+            name="upvotes[]"
+            class="select2 w-full p-2 rounded bg-gray-800"
+          >
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded"
+        >
+          Apply Filters
+        </button>
+      </form>
+
+      <!-- Display Shelters -->
+      <ul class="space-y-4">
+        <% shelters.forEach(shelter => { %>
+        <li class="p-4 bg-gray-800 rounded-lg">
+          <strong class="text-2xl"><%= shelter.name %></strong> -
+          <%=shelter.location %>
+          <p class="text-gray-400">
+            Tags: <%= shelter.description.join(", ") %>
+          </p>
+          <p class="text-gray-400">Needs: <%= shelter.needs.join(", ") %></p>
+
+          <button
+            id="upvote-button-<%= shelter.id %>"
+            class="mt-2 bg-blue-500 hover:bg-blue-400 text-white font-semibold py-1 px-3 rounded"
+            onclick="handleUpvote('<%= shelter.id %>')"
+          >
+            Upvote
+          </button>
+          <span id="upvote-count-<%= shelter.id %>" class="ml-2">
+            <%= shelter.upvotes %>
+          </span>
+
+          <a
+            href="/shelters/<%= shelter.id %>"
+            class="block text-blue-400 hover:text-blue-600 mt-2"
+            >View Details</a
+          >
+        </li>
         <% }) %>
-      </select>
+      </ul>
+    </main>
 
-      <!-- Select for Needs -->
-      <label for="needs">Needs:</label>
-      <select id="needs" name="needs[]" multiple class="select2">
-        <% availableNeeds.forEach(need => { %>
-        <option value="<%= need %>"><%= need %></option>
-        <% }) %>
-      </select>
-
-      <!-- Select for Upvotes -->
-      <label for="upvotes">Sort by Upvotes:</label>
-      <select name="upvotes" id="upvotes" class="select2">
-        <option value="asc">Ascending</option>
-        <option value="desc">Descending</option>
-      </select>
-
-      <button type="submit">Apply Filters</button>
-    </form>
-
-    <!-- Display Shelters -->
-    <ul>
-      <% filteredShelters.forEach(shelter => { %>
-      <li>
-        <strong><%= shelter.name %></strong> - <%= shelter.location %>
-        <p>Tags: <%= shelter.description.join(", ") %></p>
-        <p>Needs: <%= shelter.needs.join(", ") %></p>
-
-        <button onclick="handleUpvote(<%= shelter.id %>, this)">Upvote</button>
-        <span id="upvote-count-<%= shelter.id %>"><%= shelter.upvotes %></span>
-
-        <a href="/shelters/<%= shelter.id %>">View Details</a>
-      </li>
-      <% }) %>
-    </ul>
-
-    <footer>
-      <p>&copy; 2024 ShelterMap. All rights reserved.</p>
-    </footer>
+    <!-- Footer -->
+    <%- include('partials/footer') %>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -69,25 +118,35 @@
         $(".select2").select2();
       });
 
-      function handleUpvote(shelterId, upvoteButton) {
+      function handleUpvote(shelterId) {
+        const button = document.getElementById(`upvote-button-${shelterId}`);
+        button.disabled = true;
+
         fetch(`/shelters/${shelterId}/upvote`, {
           method: "POST",
           headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
             "Content-Type": "application/json",
           },
         })
           .then((response) => response.json())
           .then((data) => {
-            if (data.message === "Upvote successful") {
-              upvoteButton.classList.add("upvoted");
-            } else if (data.message === "Upvote removed") {
-              upvoteButton.classList.remove("upvoted");
+            if (data.success) {
+              document.getElementById(`upvote-count-${shelterId}`).textContent =
+                data.upvotes;
+            } else {
+              alert(
+                "An error occurred while trying to register the upvote. Please try again."
+              );
             }
-            document.getElementById(`upvote-count-${shelterId}`).textContent =
-              data.upvotes;
+            button.disabled = false;
           })
-          .catch((error) => console.error("Error:", error));
+          .catch((error) => {
+            console.error("Erro:", error);
+            alert(
+              "An error occurred while trying to register the upvote. Please try again."
+            );
+            button.disabled = false;
+          });
       }
     </script>
   </body>

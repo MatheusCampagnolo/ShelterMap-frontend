@@ -5,69 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
-      rel="stylesheet"
-    />
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
-  <body>
-    <header>
-      <h1>Welcome to ShelterMap</h1>
-    </header>
+  <body class="bg-gray-900 text-white flex flex-col min-h-screen">
+    <!-- Header -->
+    <%- include('partials/header') %>
 
-    <main>
-      <h2>Discover shelters near you and find ways to help.</h2>
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <!-- Hero Section -->
+      <section class="text-center mb-12">
+        <h1 class="text-4xl font-bold mb-4">Welcome to ShelterMap</h1>
+        <p class="text-lg text-gray-300">
+          Discover shelters near you and find ways to help during crises and
+          disasters.
+        </p>
+        <p class="text-lg text-gray-300">
+          Join our community to make a difference and support those in need.
+        </p>
+      </section>
+
+      <!-- Call to Action -->
+      <section class="text-center mb-8">
+        <a
+          href="/shelters"
+          class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded"
+        >
+          View Available Shelters
+        </a>
+      </section>
+
+      <!-- Additional Information -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+        <!-- Shelters Section -->
+        <div class="p-6 bg-gray-800 rounded-lg">
+          <h2 class="text-2xl font-semibold mb-4">Why ShelterMap?</h2>
+          <p class="text-gray-400">
+            We connect shelters and volunteers during times of need, providing a
+            simple way to find nearby shelters and understand what resources
+            they require.
+          </p>
+        </div>
+
+        <!-- Volunteer Section -->
+        <div class="p-6 bg-gray-800 rounded-lg">
+          <h2 class="text-2xl font-semibold mb-4">Get Involved</h2>
+          <p class="text-gray-400">
+            You can offer help by providing resources, volunteering, or
+            spreading the word about shelters that need assistance in your area.
+          </p>
+        </div>
+      </section>
+
+      <!-- Community and Support Section -->
+      <section class="mt-12 text-center">
+        <h2 class="text-3xl font-bold mb-4">How You Can Make a Difference</h2>
+        <p class="text-lg text-gray-400">
+          Our platform allows communities to unite and take action quickly.
+          Whether you are a shelter representative or a volunteer, your
+          contribution can help save lives and provide essential aid in times of
+          crisis.
+        </p>
+      </section>
     </main>
 
-    <h1>Shelters</h1>
-
-    <!-- Display Shelters -->
-    <ul>
-      <% filteredShelters.forEach(shelter => { %>
-      <li><%= shelter.name %> - <%= shelter.location %></li>
-
-      <p>Tags: <%= shelter.description.join(", ") %></p>
-      <p>Needs: <%= shelter.needs.join(", ") %></p>
-      
-      <button onclick="handleUpvote(<%= shelter.id %>, this)">Upvote</button>
-      <span id="upvote-count-<%= shelter.id %>"><%= shelter.upvotes %></span>
-      
-
-      <a href="/shelters/<%= shelter.id %>">View Details</a>
-      <% }) %>
-    </ul>
-
-    <footer>
-      <p>&copy; 2024 ShelterMap. All rights reserved.</p>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script>
-      $(document).ready(function () {
-        $(".select2").select2();
-      });
-
-      function handleUpvote(shelterId, upvoteButton) {
-        fetch(`/shelters/${shelterId}/upvote`, {
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'), 
-            'Content-Type': 'application/json'
-        }
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.message === 'Upvote successful') {
-            upvoteButton.classList.add('upvoted');
-          } else if (data.message === 'Upvote removed') {
-            upvoteButton.classList.remove('upvoted');
-          }
-          document.getElementById(`upvote-count-${shelterId}`).textContent = data.upvotes;
-        })
-        .catch(error => console.error('Error:', error));
-      }
-    </script>
-
+    <!-- Footer -->
+    <%- include('partials/footer') %>
   </body>
 </html>

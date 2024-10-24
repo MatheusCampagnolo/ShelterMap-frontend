@@ -4,51 +4,50 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
-  <body>
-    <header>
-      <h1>Shelter Details</h1>
-    </header>
+  <body class="bg-gray-900 text-white flex flex-col min-h-screen">
+    <!-- Header -->
+    <%- include('partials/header') %>
 
-    <h2><%= shelter.name %></h2>
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <h1 class="text-4xl font-bold mb-8 text-center">Shelter Details</h1>
 
-    <main>
-      <p><strong>Location:</strong> <%= shelter.location %></p>
+      <h2 class="text-3xl font-semibold mb-4"><%= shelter.name %></h2>
 
-      <p>
-        <strong>Coordinates:</strong> <%= shelter.latitude %>, <%=
-        shelter.longitude %>
-      </p>
+      <div class="space-y-4">
+        <p><strong>Location:</strong> <%= shelter.location %></p>
+        <p>
+          <strong>Coordinates:</strong> <%= shelter.latitude %>,
+          <%=shelter.longitude %>
+        </p>
 
-      <p>
-        <strong>Description:</strong> <% if (shelter.description &&
-        shelter.description.length > 0) { %> <%= shelter.description.join(', ')
-        %>
-        <!-- Display as tags -->
-        <% } else { %> No description provided. <% } %>
-      </p>
+        <p>
+          <strong>Description:</strong>
+          <% if (shelter.description && shelter.description.length > 0) { %> <%=
+          shelter.description.join(', ') %> <% } else { %> No description
+          provided. <% } %>
+        </p>
 
-      <p>
-        <strong>Needs:</strong> <% if (shelter.needs && shelter.needs.length >
-        0) { %> <%= shelter.needs.join(', ') %>
-        <!-- Display as list of needs -->
-        <% } else { %> No current needs. <% } %>
-      </p>
+        <p>
+          <strong>Needs:</strong>
+          <% if (shelter.needs && shelter.needs.length > 0) { %> <%=
+          shelter.needs.join(', ') %> <% } else { %> No current needs. <% } %>
+        </p>
 
-      <p>
-        <strong>Upvotes:</strong> <span id="upvote-count-<%= shelter.id %>"><%= shelter.upvotes %></span>
-      </p>
+        <p>
+          <strong>Upvotes:</strong>
+          <span><%= shelter.upvotes %></span>
+        </p>
+      </div>
 
+      <a href="/shelters" class="block text-blue-400 hover:text-blue-600 mt-4"
+        >Back to shelters list</a
+      >
     </main>
 
-    <a href="/shelters">Back to shelters list</a>
-
-    <footer>
-      <p>&copy; 2024 ShelterMap. All rights reserved.</p>
-    </footer>
-
-    <script>
-      document.getElementById(`upvote-count-${shelterId}`).textContent = data.upvotes;
-    </script>
+    <!-- Footer -->
+    <%- include('partials/footer') %>
   </body>
 </html>

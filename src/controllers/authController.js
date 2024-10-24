@@ -1,13 +1,58 @@
 const bcrypt = require("bcryptjs");
+const e = require("express");
 const jwt = require("jsonwebtoken");
 
 let users = [
-    // Create some example users
-    {
-        username: "user1",
-        email: "user1@gmail.com",
-        password: "$2a$10$Z1V6iK3b7t0zqUuKm6Zb7eP1oZ4X2B2G3y8o7wvFJ7O0t3Jv9sY7S", // password: password1
-    },
+  {
+    username: "user1",
+    email: "user1@gmail.com",
+    password: "$2a$10$Z1V6iK3b7t0zqUuKm6Zb7eP1oZ4X2B2G3y8o7wvFJ7O0t3Jv9sY7S", // password: password1
+  },
+  {
+    username: "user2",
+    email: "user2gmail.com",
+    password: "$2a$10$Z1V6iK3b7t0zqUuKm6Zb7eP1oZ4X2B2G3y8o7wvFJ7O0t3Jv9sY7S", // password: password1,
+  },
+  {
+    username: "user3",
+    email: "user3@gmail.com",
+    password: "$2a$10$Z1V6iK3b7t0zqUuKm6Zb7eP1oZ4X2B2G3y8o7wvFJ7O0t3Jv9sY7S", // password: password1
+  },
+  {
+    username: "user4",
+    email: "user4@gmail.com",
+    password: "$2a$10$Z1V6iK3b7t0zqUuKm6Zb7eP1oZ4X2B2G3y8o7wvFJ7O0t3Jv9sY7S", // password: password1
+  },
+  {
+    username: "user5",
+    email: "user5@gmail.com",
+    password: "$2a$10$Z1V6iK3b7t0zqUuKm6Zb7eP1oZ4X2B2G3y8o7wvFJ7O0t3Jv9sY7S", // password: password1
+  },
+  {
+    username: "user6",
+    email: "user6@gmail.com",
+    password: "$2a$10$Z1V6iK3b7t0zqUuKm6Zb7eP1oZ4X2B2G3y8o7wvFJ7O0t3Jv9sY7S", // password: password1
+  },
+  {
+    username: "user7",
+    email: "user7@gmail.com",
+    password: "$2a$10$Z1V6iK3b7t0zqUuKm6Zb7eP1oZ4X2B2G3y8o7wvFJ7O0t3Jv9sY7S", // password: password1
+  },
+  {
+    username: "user8",
+    email: "user8@gmail.com",
+    password: "$2a$10$Z1V6iK3b7t0zqUuKm6Zb7eP1oZ4X2B2G3y8o7wvFJ7O0t3Jv9sY7S", // password: password1
+  },
+  {
+    username: "user9",
+    email: "user9@gmail.com",
+    password: "$2a$10$Z1V6iK3b7t0zqUuKm6Zb7eP1oZ4X2B2G3y8o7wvFJ7O0t3Jv9sY7S", // password: password1
+  },
+  {
+    username: "user10",
+    email: "user10@gmail.com",
+    password: "$2a$10$Z1V6iK3b7t0zqUuKm6Zb7eP1oZ4X2B2G3y8o7wvFJ7O0t3Jv9sY7S", // password: password1
+  },
 ]; // Temporarily store users in memory
 
 exports.getRegisterPage = (req, res) => {

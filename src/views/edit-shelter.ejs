@@ -10,67 +10,94 @@
       href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/select.css">
   </head>
-  <body>
-    <h1>Edit Shelter</h1>
+  <body class="bg-gray-900 text-white flex flex-col min-h-screen">
+    <!-- Header -->
+    <%- include('partials/header') %>
 
-    <form action="/shelters/<%= shelter.id %>?_method=PUT" method="POST">
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" value="<%= shelter.name %>" />
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <h1 class="text-4xl font-bold mb-8 text-center">Edit Shelter</h1>
 
-      <br>
+      <form action="/shelters/<%= shelter.id %>/edit" method="POST" class="space-y-4">
+        <div>
+          <label for="name" class="block text-lg">Shelter Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value="<%= shelter.name %>"
+            required
+            class="w-full p-2 rounded bg-gray-800 text-white"
+          />
+        </div>
 
-      <label for="location">Location:</label>
-      <input
-        type="text"
-        id="location"
-        name="location"
-        value="<%= shelter.location %>"
-      />
+        <div>
+          <label for="location" class="block text-lg">Location:</label>
+          <input
+            type="text"
+            id="location"
+            name="location"
+            value="<%= shelter.location %>"
+            required
+            class="w-full p-2 rounded bg-gray-800 text-white"
+          />
+        </div>
 
-      <br>
+        <div>
+          <label for="latitude" class="block text-lg">Latitude:</label>
+          <input
+            type="number"
+            id="latitude"
+            name="latitude"
+            step="any"
+            value="<%= shelter.latitude %>"
+            class="w-full p-2 rounded bg-gray-800 text-white"
+          />
+        </div>
 
-      <label for="latitude">Latitude:</label>
-      <input
-        type="text"
-        id="latitude"
-        name="latitude"
-        value="<%= shelter.latitude %>"
-      />
+        <div>
+          <label for="longitude" class="block text-lg">Longitude:</label>
+          <input
+            type="number"
+            id="longitude"
+            name="longitude"
+            step="any"
+            value="<%= shelter.longitude %>"
+            class="w-full p-2 rounded bg-gray-800 text-white"
+          />
+        </div>
 
-      <br>
+        <div>
+          <label for="description" class="block text-lg">Description (Tags):</label>
+          <select id="description" name="description[]" multiple class="select2 w-full p-2 rounded bg-gray-800">
+            <% availableTags.forEach(tag => { %>
+            <option value="<%= tag %>" <% if (shelter.description.includes(tag)) { %> selected <% } %>><%= tag %></option>
+            <% }) %>
+          </select>
+        </div>
 
-      <label for="longitude">Longitude:</label>
-      <input
-        type="text"
-        id="longitude"
-        name="longitude"
-        value="<%= shelter.longitude %>"
-      />
+        <div>
+          <label for="needs" class="block text-lg">Needs:</label>
+          <select id="needs" name="needs[]" multiple class="select2 w-full p-2 rounded bg-gray-800">
+            <% availableNeeds.forEach(need => { %>
+            <option value="<%= need %>" <% if (shelter.needs.includes(need)) { %> selected <% } %>><%= need %></option>
+            <% }) %>
+          </select>
+        </div>
 
-      <br>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded">
+          Update Shelter
+        </button>
+      </form>
 
-      <label for="description">Description:</label>
-      <select id="description" name="description[]" multiple class="select2">
-        <% availableTags.forEach(tag => { %>
-        <option value="<%= tag %>" <% if (shelter.description.includes(tag)) { %> selected <% } %>><%= tag %></option>
-        <% }) %>
-      </select>
+      <a href="/profile" class="block text-blue-400 hover:text-blue-600 mt-4">Back to Shelter List</a>
+    </main>
 
-      <br>
-
-      <label for="needs">Needs:</label>
-      <select id="needs" name="needs[]" multiple class="select2">
-        <% availableNeeds.forEach(need => { %>
-        <option value="<%= need %>" <% if (shelter.needs.includes(need)) { %> selected <% } %>><%= need %></option>
-        <% }) %>
-      </select>
-
-      <br>
-
-      <button type="submit">Update Shelter</button>
-
-    <a href="/profile">Back to Shelter List</a>
+    <!-- Footer -->
+    <%- include('partials/footer') %>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

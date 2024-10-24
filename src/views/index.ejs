@@ -5,21 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
 
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
-  <body>
+  <body class="bg-gray-900 text-white flex flex-col min-h-screen">
+    <!-- Header -->
     <%- include('partials/header') %>
 
-    <h1>Welcome to ShelterMap</h1>
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <!-- Hero Section -->
+      <section class="text-center mb-12">
+        <h1 class="text-4xl font-bold mb-4">Welcome to ShelterMap</h1>
+        <p class="text-lg text-gray-300">
+          Discover shelters near you and find ways to help during crises and
+          disasters.
+        </p>
+        <p class="text-lg text-gray-300">
+          Join our community to make a difference and support those in need.
+        </p>
+      </section>
 
-    <main>
-      <h2>Discover shelters near you and find ways to help.</h2>
+      <!-- Call to Action -->
+      <section class="text-center mb-8">
+        <a
+          href="/shelters"
+          class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded"
+        >
+          View Available Shelters
+        </a>
+      </section>
+
+      <!-- Additional Information -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+        <!-- Shelters Section -->
+        <div class="p-6 bg-gray-800 rounded-lg">
+          <h2 class="text-2xl font-semibold mb-4">Why ShelterMap?</h2>
+          <p class="text-gray-400">
+            We connect shelters and volunteers during times of need, providing a
+            simple way to find nearby shelters and understand what resources
+            they require.
+          </p>
+        </div>
+
+        <!-- Volunteer Section -->
+        <div class="p-6 bg-gray-800 rounded-lg">
+          <h2 class="text-2xl font-semibold mb-4">Get Involved</h2>
+          <p class="text-gray-400">
+            You can offer help by providing resources, volunteering, or
+            spreading the word about shelters that need assistance in your area.
+          </p>
+        </div>
+      </section>
+
+      <!-- Community and Support Section -->
+      <section class="mt-12 text-center">
+        <h2 class="text-3xl font-bold mb-4">How You Can Make a Difference</h2>
+        <p class="text-lg text-gray-400">
+          Our platform allows communities to unite and take action quickly.
+          Whether you are a shelter representative or a volunteer, your
+          contribution can help save lives and provide essential aid in times of
+          crisis.
+        </p>
+      </section>
     </main>
 
-    <!-- You can see the shelters list clicking on -->
-    <!-- the "Available Shelters" link below. -->
-    <a href="/shelters">Shelters List</a>
-
+    <!-- Footer -->
     <%- include('partials/footer') %>
   </body>
 </html>

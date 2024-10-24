@@ -4,46 +4,65 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
-  <body>
-    <header>
-      <h1>Welcome to the Profile Page</h1>
-    </header>
+  <body class="bg-gray-900 text-white flex flex-col min-h-screen">
+    <!-- Header -->
+    <%- include('partials/header') %>
 
-    <p>
-      Here, you will manage your shelters and view your profile information.
-    </p>
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <h1 class="text-4xl font-bold mb-8 text-center">
+        Welcome to the Profile Page
+      </h1>
 
-    <h2>Your Shelters</h2>
-    <% if (shelters.length === 0) { %>
-    <p>No shelters registered yet.</p>
-    <% } else { %>
-    <ul>
-      <% shelters.forEach(shelter => { %>
-      <li>
-        <strong><%= shelter.name %></strong> - <%= shelter.location %>
-        <br />
-        <strong>Description:</strong>
-        <% if (shelter.description && shelter.description.length > 0) { %> <%=
-        shelter.description.join(', ') %> <% } else { %> No current description. <% } %>
-        <br />
-        <strong>Needs:</strong>
-        <% if (shelter.needs && shelter.needs.length > 0) { %> <%=
-        shelter.needs.join(', ') %> <% } else { %> No current needs. <% } %>
-        <br />
-        <a href="/shelters/<%= shelter.id %>/edit">Edit</a>
-        <form
-          action="/shelters/<%= shelter.id %>?_method=DELETE"
-          method="POST"
-          style="display: inline"
-        >
-          <button type="submit">Delete</button>
-        </form>
-      </li>
-      <% }) %>
-    </ul>
-    <% } %>
+      <p class="text-lg mb-6 text-center">
+        Here, you will manage your shelters and view your profile information.
+      </p>
 
-    <a href="/shelters/new">Add a New Shelter</a>
+      <h2 class="text-2xl font-semibold mb-4">Your Shelters</h2>
+
+      <% if (shelters.length === 0) { %>
+      <p>No shelters registered yet.</p>
+      <% } else { %>
+      <ul class="space-y-4">
+        <% shelters.forEach(shelter => { %>
+        <li class="bg-gray-800 p-4 rounded">
+          <strong class="text-xl"><%= shelter.name %></strong> - <%= shelter.location %>
+          <br />
+          <strong>Description:</strong>
+          <% if (shelter.description && shelter.description.length > 0) { %> <%=
+          shelter.description.join(', ') %> <% } else { %> No current
+          description. <% } %>
+          <br />
+          <strong>Needs:</strong>
+          <% if (shelter.needs && shelter.needs.length > 0) { %> <%=
+          shelter.needs.join(', ') %> <% } else { %> No current needs. <% } %>
+          <br />
+          <a
+            href="/shelters/<%= shelter.id %>/edit"
+            class="text-blue-400 hover:text-blue-600"
+            >Edit</a
+          >
+          <form action="/shelters/<%= shelter.id %>?_method=DELETE" method="POST" class="inline-block">
+            <button type="submit" class="text-red-400 hover:text-red-600" onclick="return confirm('Are you sure you want to delete this shelter?')">
+              Delete
+            </button>
+          </form>
+        </li>
+        <% }) %>
+      </ul>
+      <% } %>
+
+      <a
+        href="/shelters/new"
+        class="block bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded text-center mt-6"
+      >
+        Add a New Shelter
+      </a>
+    </main>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
   </body>
 </html>

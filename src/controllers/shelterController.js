@@ -330,15 +330,17 @@ exports.editShelter = (req, res) => {
 
 exports.deleteShelter = (req, res) => {
   const shelterId = parseInt(req.params.id);
-  // verify if the shelter exists and belongs to the user
-  const shelter = shelters.find(
-    (s) => s.id === shelterId && s.user === req.user.email
-  );
 
-  if (!shelter) return res.status(404).send("Shelter not found");
+  const shelterIndex = shelters.findIndex(
+    (shelter) => 
+      shelter.id === shelterId && shelter.user === req.user.email
+  )
 
-  // remove the shelter from the list
-  shelters = shelters.filter((s) => s.id !== shelterId);
+  if (shelterIndex === -1) {
+    return res.status(404).send("Shelter not found");
+  }
+
+  shelters.splice(shelterIndex, 1);
 
   res.redirect("/profile");
 };

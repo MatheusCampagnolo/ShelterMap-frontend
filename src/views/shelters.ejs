@@ -87,7 +87,11 @@
           </p>
           <p class="text-gray-400">Needs: <%= shelter.needs.join(", ") %></p>
 
-          <button id="upvote-button-<%= shelter.id %>" class="mt-2 bg-blue-500 hover:bg-blue-400 text-white font-semibold py-1 px-3 rounded" onclick="handleUpvote('<%= shelter.id %>')">
+          <button
+            id="upvote-button-<%= shelter.id %>"
+            class="mt-2 bg-blue-500 hover:bg-blue-400 text-white font-semibold py-1 px-3 rounded"
+            onclick="handleUpvote('<%= shelter.id %>')"
+          >
             Upvote
           </button>
           <span id="upvote-count-<%= shelter.id %>" class="ml-2">
@@ -120,6 +124,9 @@
 
         fetch(`/shelters/${shelterId}/upvote`, {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
         })
           .then((response) => response.json())
           .then((data) => {

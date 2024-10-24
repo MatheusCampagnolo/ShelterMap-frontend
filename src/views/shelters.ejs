@@ -10,7 +10,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="stylesheet" href="/css/select.css">
+    <link rel="stylesheet" href="/css/select.css" />
   </head>
   <body class="bg-gray-900 text-white flex flex-col min-h-screen">
     <!-- Header -->
@@ -80,17 +80,14 @@
       <ul class="space-y-4">
         <% shelters.forEach(shelter => { %>
         <li class="p-4 bg-gray-800 rounded-lg">
-          <strong class="text-2xl"><%= shelter.name %></strong> - <%=
-          shelter.location %>
+          <strong class="text-2xl"><%= shelter.name %></strong> -
+          <%=shelter.location %>
           <p class="text-gray-400">
             Tags: <%= shelter.description.join(", ") %>
           </p>
           <p class="text-gray-400">Needs: <%= shelter.needs.join(", ") %></p>
 
-          <button
-            class="mt-2 bg-blue-500 hover:bg-blue-400 text-white font-semibold py-1 px-3 rounded"
-            onclick="handleUpvote(<%= shelter.id %>, this)"
-          >
+          <button id="upvote-button-<%= shelter.id %>" class="mt-2 bg-blue-500 hover:bg-blue-400 text-white font-semibold py-1 px-3 rounded" onclick="handleUpvote('<%= shelter.id %>')">
             Upvote
           </button>
           <span id="upvote-count-<%= shelter.id %>" class="ml-2">
@@ -117,15 +114,32 @@
         $(".select2").select2();
       });
 
-      function handleUpvote(shelterId, button) {
-        $.ajax({
-          url: `/shelters/${shelterId}/upvote`,
+      function handleUpvote(shelterId) {
+        const button = document.getElementById(`upvote-button-${shelterId}`);
+        button.disabled = true;
+
+        fetch(`/shelters/${shelterId}/upvote`, {
           method: "POST",
-          success: function (data) {
-            $(button).prop("disabled", true);
-            $(`#upvote-count-${shelterId}`).text(data.upvotes);
-          },
-        });
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              document.getElementById(`upvote-count-${shelterId}`).textContent =
+                data.upvotes;
+            } else {
+              alert(
+                "An error occurred while trying to register the upvote. Please try again."
+              );
+            }
+            button.disabled = false;
+          })
+          .catch((error) => {
+            console.error("Erro:", error);
+            alert(
+              "An error occurred while trying to register the upvote. Please try again."
+            );
+            button.disabled = false;
+          });
       }
     </script>
   </body>

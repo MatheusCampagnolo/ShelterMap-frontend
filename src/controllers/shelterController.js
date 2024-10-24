@@ -347,13 +347,30 @@ exports.deleteShelter = (req, res) => {
 
 exports.upvoteShelter = (req, res) => {
   const shelterId = parseInt(req.params.id);
-  const shelter = shelters.find((shelter) => shelter.id === shelterId);
 
-  if (!shelter) {
-    return res.status(404).send("Shelter not found");
+  const shelter = shelters.find((shelter) => shelter.id === shelterId);
+  if (!shelter) return res.status(404).send("Shelter not found");
+
+  if (!Array.isArray(shelter.upvotesUsers)) {
+    shelter.upvotesUsers = []; // Initialize as an empty array if not defined
+  }
+  
+  const userEmail = req.user.email;
+  const userHasVoted = shelter.upvotesUsers.includes(userEmail);
+
+  if (userHasVoted) {
+    // Remove user vote
+    shelter.upvotes -= 1;
+    shelter.upvotesUsers = shelter.upvotesUsers.filter(
+      (email) => email !== userEmail
+    );
+    // console.log('Upvote removed');
+  } else {
+    // Add user vote
+    shelter.upvotes += 1;
+    shelter.upvotesUsers.push(userEmail);
+    // console.log('Upvote added');
   }
 
-  shelter.upvotes += 1;
-
-  res.redirect(`/shelters`);
+  res.json({ success: true, upvotes: shelter.upvotes });
 };

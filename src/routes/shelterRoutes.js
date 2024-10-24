@@ -17,6 +17,6 @@ router.delete("/:id", authenticateToken, shelterController.deleteShelter);
 
 // upvotes
 
-router.post("/:id/upvote", shelterController.upvoteShelter);
+router.post("/:id/upvote", authenticateToken, shelterController.upvoteShelter);
 
 module.exports = router;

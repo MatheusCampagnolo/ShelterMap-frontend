@@ -1,4 +1,4 @@
 node_modules/
 .env
-public/css/tailwind.css
-public/css/tailwind.css.map
+public/css/styles.css
+public/css/styles.css.map
